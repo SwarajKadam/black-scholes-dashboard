@@ -1,0 +1,20 @@
+# virtual environments
+env1/
+.venv/
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# build artifacts
+build/
+dist/
+*.egg-info/
+
+# streamlit
+.streamlit/
+
+# OS
+.DS_Store
+Thumbs.db
