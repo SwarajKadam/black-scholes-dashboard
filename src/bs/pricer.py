@@ -1,5 +1,6 @@
 import math
 from dataclasses import dataclass
+import numpy as np
 
 from .utils import norm_cdf, validate_non_negative, validate_positive
 
@@ -14,29 +15,27 @@ class BSInputs:
     q: float = 0.0  # dividend yield (annual, cont comp)
 
 
-def d1_d2(S: float, K: float, T: float, r: float, sigma: float, q: float = 0.0) -> tuple[float, float]:
-    validate_positive("S", S)
-    validate_positive("K", K)
-    validate_positive("T", T)
-    validate_positive("sigma", sigma)
+def d1_d2_np(S, K, T, r, sigma, q=0.0):
+    S = np.asarray(S, dtype=float)
+    sigma = np.asarray(sigma, dtype=float)
 
-    vsqrt = sigma * math.sqrt(T)
-    d1 = (math.log(S / K) + (r - q + 0.5 * sigma * sigma) * T) / vsqrt
+    vsqrt = sigma * np.sqrt(T)
+    d1 = (np.log(S / K) + (r - q + 0.5 * sigma * sigma) * T) / vsqrt
     d2 = d1 - vsqrt
     return d1, d2
 
 
-def price_call(S: float, K: float, T: float, r: float, sigma: float, q: float = 0.0) -> float:
-    d1, d2 = d1_d2(S, K, T, r, sigma, q)
-    disc_q = math.exp(-q * T)
-    disc_r = math.exp(-r * T)
+def price_call(S, K, T, r, sigma, q=0.0):
+    d1, d2 = d1_d2_np(S, K, T, r, sigma, q)
+    disc_q = np.exp(-q * T)
+    disc_r = np.exp(-r * T)
     return S * disc_q * norm_cdf(d1) - K * disc_r * norm_cdf(d2)
 
 
-def price_put(S: float, K: float, T: float, r: float, sigma: float, q: float = 0.0) -> float:
-    d1, d2 = d1_d2(S, K, T, r, sigma, q)
-    disc_q = math.exp(-q * T)
-    disc_r = math.exp(-r * T)
+def price_put(S, K, T, r, sigma, q=0.0):
+    d1, d2 = d1_d2_np(S, K, T, r, sigma, q)
+    disc_q = np.exp(-q * T)
+    disc_r = np.exp(-r * T)
     return K * disc_r * norm_cdf(-d2) - S * disc_q * norm_cdf(-d1)
 
 

@@ -1,9 +1,9 @@
 import math
+from scipy.stats import norm
 
 
-def norm_cdf(x: float) -> float:
-    """Standard normal CDF using erf (fast, no scipy needed)."""
-    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+def norm_cdf(x):
+    return norm.cdf(x)
 
 
 def validate_positive(name: str, value: float) -> None:
